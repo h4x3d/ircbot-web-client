@@ -1,2 +1,4 @@
-$ = require 'jquery'
-console.log 'foobar'
+angular = require 'angular'
+ngRoute = require 'angular-route'
+
+module = angular.module 'app', ['ngRoute']
