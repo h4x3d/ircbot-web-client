@@ -11,11 +11,14 @@ coffeeify  = require 'coffeeify'
 nodeStatic = require 'node-static'
 lr         = require 'tiny-lr'
 livereload = require 'gulp-livereload'
+plumber    = require 'gulp-plumber'
+prefix     = require 'gulp-autoprefixer'
 reloadServer = lr()
 
 compileCoffee = (debug = false) ->
   bundle = gulp
     .src('./src/coffee/main.coffee', read: false)
+    .pipe(plumber())
     .pipe(browserify(debug: debug))
     .pipe(rename('bundle.js'))
 
@@ -36,6 +39,7 @@ compileStylus = (debug = false) ->
   styles = gulp
     .src('src/stylus/style.styl')
     .pipe(stylus({set: ['include css']}))
+    .pipe(prefix("last 1 version", "> 1%", "ie 8"))
 
   styles.pipe(CSSmin()) unless debug
 
