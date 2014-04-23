@@ -20,47 +20,66 @@ reloadServer = lr()
 
 production = process.env.NODE_ENV is 'production'
 
-gulp.task 'coffee', ->
+paths =
+  scripts:
+    source: './src/coffee/main.coffee'
+    destination: './public/js/'
+    filename: 'bundle.js'
+  templates:
+    source: './src/jade/*.jade'
+    watch: './src/jade/*.jade'
+    destination: './public/'
+  styles:
+    source: './src/stylus/style.styl'
+    watch: './src/stylus/*.styl'
+    destination: './public/css/'
+  assets:
+    source: './src/assets/**/*.*'
+    watch: './src/assets/**/*.*'
+    destination: './public/'
 
-  bundle = watchify('./src/coffee/main.coffee')
+handleError = (err) ->
+  gutil.log err
+  gutil.beep()
+  this.emit 'end'
 
-  rebundle = ->
+gulp.task 'scripts', ->
 
-    build = bundle.bundle(debug: not production)
-      .pipe(source('bundle.js'))
+  bundle = browserify paths.scripts.source
 
-    build.pipe(streamify(uglify())) if production
+  build = bundle.bundle(debug: not production)
+    .on 'error', handleError
+    .pipe source paths.scripts.filename
 
-    build
-      .pipe(gulp.dest('./public/js/'))
-      .pipe(livereload(reloadServer))
+  build.pipe(streamify(uglify())) if production
 
-  bundle.on 'update', rebundle unless production
+  build
+    .pipe gulp.dest paths.scripts.destination
 
-  rebundle()
-
-gulp.task 'jade', ->
+gulp.task 'templates', ->
   gulp
-    .src('src/jade/*.jade')
+    .src paths.templates.source
     .pipe(jade(pretty: not production))
-    .pipe(gulp.dest('public/'))
+    .on 'error', handleError
+    .pipe gulp.dest paths.templates.destination
     .pipe livereload(reloadServer)
 
-gulp.task 'stylus', ->
+gulp.task 'styles', ->
   styles = gulp
-    .src('src/stylus/style.styl')
+    .src paths.styles.source
     .pipe(stylus({set: ['include css']}))
-    .pipe(prefix("last 1 version", "> 1%", "ie 8"))
+    .on 'error', handleError
+    .pipe prefix 'last 2 versions', 'Chrome 34', 'Firefox 28', 'iOS 7'
 
-  styles.pipe(CSSmin()) if production
+  styles = styles.pipe(CSSmin()) if production
 
-  styles.pipe(gulp.dest('public/css/'))
+  styles.pipe gulp.dest paths.styles.destination
     .pipe livereload reloadServer
 
 gulp.task 'assets', ->
   gulp
-    .src('src/assets/**/*.*')
-    .pipe gulp.dest 'public/'
+    .src paths.assets.source
+    .pipe gulp.dest paths.assets.destination
 
 gulp.task "server", ->
   staticFiles = new nodeStatic.Server './public'
@@ -71,12 +90,25 @@ gulp.task "server", ->
   .listen 9001
 
 gulp.task "watch", ->
-  reloadServer.listen 35729, (err) ->
-    console.error err if err?
+  reloadServer.listen 35729
 
-    gulp.watch "src/jade/*.jade", ["jade"]
-    gulp.watch "src/stylus/*.styl", ["stylus"]
-    gulp.watch "src/assets/**/*.*", ["assets"]
+  gulp.watch paths.templates.watch, ['templates']
+  gulp.watch paths.styles.watch, ['styles']
+  gulp.watch paths.assets.watch, ['assets']
 
-gulp.task "build", ["coffee", "jade", "stylus", "assets"]
+  bundle = watchify paths.scripts.source
+
+  bundle.on 'update', ->
+    build = bundle.bundle(debug: not production)
+      .on 'error', handleError
+
+      .pipe source paths.scripts.filename
+
+    build
+      .pipe gulp.dest paths.scripts.destination
+      .pipe(livereload(reloadServer))
+
+  .emit 'update'
+
+gulp.task "build", ['scripts', 'templates', 'styles', 'assets']
 gulp.task "default", ["build", "watch", "server"]
