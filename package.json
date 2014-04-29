@@ -38,8 +38,8 @@
     "watchify": "~0.6.3"
   },
   "browser": {
-    "angular": "./vendor/angular/angular.js",
-    "angular-route": "./vendor/angular-route/angular-route.js"
+    "angular": "./bower_components/angular/angular.js",
+    "angular-route": "./bower_components/angular-route/angular-route.js"
   },
   "browserify-shim": {
     "angular": "angular",
