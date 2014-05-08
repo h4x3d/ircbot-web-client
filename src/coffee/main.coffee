@@ -1,4 +1,8 @@
 angular = require 'angular'
 ngRoute = require 'angular-route'
 
-module = angular.module 'app', ['ngRoute']
+angular.module 'templates', []
+require '../../tmp/templates.js'
+
+module = angular.module 'app', ['ngRoute', 'templates']
+module.directive 'example', require './directives/example.coffee'

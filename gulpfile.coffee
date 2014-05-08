@@ -1,21 +1,22 @@
-path       = require 'path'
+browserify = require 'browserify'
+coffeeify  = require 'coffeeify'
+CSSmin     = require 'gulp-minify-css'
 gulp       = require 'gulp'
 gutil      = require 'gulp-util'
 jade       = require 'gulp-jade'
-stylus     = require 'gulp-stylus'
-CSSmin     = require 'gulp-minify-css'
-browserify = require 'browserify'
-watchify   = require 'watchify'
-source     = require 'vinyl-source-stream'
-streamify  = require 'gulp-streamify'
-rename     = require 'gulp-rename'
-uglify     = require 'gulp-uglify'
-coffeeify  = require 'coffeeify'
-nodeStatic = require 'node-static'
-lr         = require 'tiny-lr'
 livereload = require 'gulp-livereload'
+lr         = require 'tiny-lr'
+nodeStatic = require 'node-static'
+path       = require 'path'
 plumber    = require 'gulp-plumber'
 prefix     = require 'gulp-autoprefixer'
+rename     = require 'gulp-rename'
+source     = require 'vinyl-source-stream'
+streamify  = require 'gulp-streamify'
+stylus     = require 'gulp-stylus'
+templates  = require 'gulp-angular-templatecache'
+uglify     = require 'gulp-uglify'
+watchify   = require 'watchify'
 reloadServer = lr()
 
 production = process.env.NODE_ENV is 'production'
@@ -26,8 +27,9 @@ paths =
     destination: './public/js/'
     filename: 'bundle.js'
   templates:
-    source: './src/jade/*.jade'
-    watch: './src/jade/*.jade'
+    main: './src/jade/index.jade'
+    source: './src/jade/**/*.jade'
+    watch: './src/jade/**/*.jade'
     destination: './public/'
   styles:
     source: './src/stylus/style.styl'
@@ -60,10 +62,18 @@ gulp.task 'scripts', ->
 
 gulp.task 'templates', ->
   gulp
-    .src paths.templates.source
+    .src paths.templates.main
     .pipe(jade(pretty: not production))
     .on 'error', handleError
     .pipe gulp.dest paths.templates.destination
+    .pipe livereload(reloadServer)
+
+  gulp
+    .src([paths.templates.source, "!#{paths.templates.main}"])
+    .pipe(jade(pretty: not production))
+    .on 'error', handleError
+    .pipe(templates('templates.js'))
+    .pipe(gulp.dest('tmp'))
     .pipe livereload(reloadServer)
 
 gulp.task 'styles', ->
