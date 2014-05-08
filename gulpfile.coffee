@@ -1,6 +1,7 @@
 browserify = require 'browserify'
 coffeeify  = require 'coffeeify'
 CSSmin     = require 'gulp-minify-css'
+ecstatic   = require 'ecstatic'
 gulp       = require 'gulp'
 gutil      = require 'gulp-util'
 jade       = require 'gulp-jade'
@@ -93,13 +94,10 @@ gulp.task 'assets', ->
     .src paths.assets.source
     .pipe gulp.dest paths.assets.destination
 
-gulp.task "server", ->
-  staticFiles = new nodeStatic.Server './public'
-  require('http').createServer (req, res) ->
-    req.addListener 'end', ->
-      staticFiles.serve req, res
-    req.resume()
-  .listen 9001
+gulp.task 'server', ->
+  require('http')
+    .createServer ecstatic root: __dirname + '/public'
+    .listen 9001
 
 gulp.task "watch", ->
   reloadServer.listen 35729
