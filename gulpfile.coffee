@@ -17,6 +17,7 @@ stylus     = require 'gulp-stylus'
 templates  = require 'gulp-angular-templatecache'
 uglify     = require 'gulp-uglify'
 watchify   = require 'watchify'
+es         = require 'event-stream'
 reloadServer = lr()
 
 production = process.env.NODE_ENV is 'production'
@@ -45,7 +46,7 @@ handleError = (err) ->
   gutil.beep()
   this.emit 'end'
 
-gulp.task 'scripts', ->
+gulp.task 'scripts', ['templates'], ->
 
   bundle = browserify
     entries: [paths.scripts.source]
@@ -60,21 +61,23 @@ gulp.task 'scripts', ->
   build
     .pipe gulp.dest paths.scripts.destination
 
-gulp.task 'templates', ->
-  gulp
+compileTemplates = ->
+  main = gulp
     .src paths.templates.main
-    .pipe(jade(pretty: not production))
+    .pipe jade pretty: not production
     .on 'error', handleError
     .pipe gulp.dest paths.templates.destination
-    .pipe livereload(reloadServer)
 
-  gulp
-    .src([paths.templates.source, "!#{paths.templates.main}"])
-    .pipe(jade(pretty: not production))
+  tpls = gulp
+    .src [paths.templates.source, '!#{paths.templates.main}']
+    .pipe jade pretty: not production
     .on 'error', handleError
-    .pipe(templates('templates.js'))
-    .pipe(gulp.dest('tmp'))
-    .pipe livereload(reloadServer)
+    .pipe templates 'templates.js'
+    .pipe gulp.dest 'tmp'
+
+  es.merge main, tpls
+
+gulp.task 'templates', compileTemplates
 
 gulp.task 'styles', ->
   styles = gulp
@@ -101,7 +104,6 @@ gulp.task 'server', ->
 gulp.task "watch", ->
   reloadServer.listen 35729
 
-  gulp.watch paths.templates.watch, ['templates']
   gulp.watch paths.styles.watch, ['styles']
   gulp.watch paths.assets.watch, ['assets']
 
@@ -120,6 +122,10 @@ gulp.task "watch", ->
       .pipe(livereload(reloadServer))
 
   .emit 'update'
+
+  gulp.watch paths.templates.watch, ->
+    compileTemplates().on 'end', ->
+      bundle.emit 'update'
 
 gulp.task "build", ['scripts', 'templates', 'styles', 'assets']
 gulp.task "default", ["build", "watch", "server"]
