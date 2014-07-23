@@ -1,12 +1,10 @@
 browserify = require 'browserify'
-coffeeify  = require 'coffeeify'
 CSSmin     = require 'gulp-minify-css'
 ecstatic   = require 'ecstatic'
 gulp       = require 'gulp'
 gutil      = require 'gulp-util'
 jade       = require 'gulp-jade'
 livereload = require 'gulp-livereload'
-lr         = require 'tiny-lr'
 path       = require 'path'
 plumber    = require 'gulp-plumber'
 prefix     = require 'gulp-autoprefixer'
@@ -18,13 +16,12 @@ templates  = require 'gulp-angular-templatecache'
 uglify     = require 'gulp-uglify'
 watchify   = require 'watchify'
 es         = require 'event-stream'
-reloadServer = lr()
 
 production = process.env.NODE_ENV is 'production'
 
 paths =
   scripts:
-    source: './src/coffee/main.coffee'
+    source: './src/js/app.js'
     destination: './public/js/'
     filename: 'bundle.js'
   templates:
@@ -50,7 +47,6 @@ gulp.task 'scripts', ['templates'], ->
 
   bundle = browserify
     entries: [paths.scripts.source]
-    extensions: ['.coffee']
 
   build = bundle.bundle(debug: not production)
     .on 'error', handleError
@@ -100,7 +96,7 @@ gulp.task 'assets', ->
 gulp.task 'server', ->
   require('http')
     .createServer ecstatic root: __dirname + '/public'
-    .listen 9001
+    .listen 9002
 
 gulp.task "watch", ->
   livereload.listen()
@@ -110,7 +106,6 @@ gulp.task "watch", ->
 
   bundle = watchify
     entries: [paths.scripts.source]
-    extensions: ['.coffee']
 
   bundle.on 'update', ->
     build = bundle.bundle(debug: not production)

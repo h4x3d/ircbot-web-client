@@ -6,7 +6,7 @@
 * [Stylus](http://learnboost.github.io/stylus) files to CSS
 * [CoffeeScript](http://coffeescript.org/) files to Javascript through [browserify](http://browserify.org/)
     * You are able to use 'require' in your client-side code
-* Serves your static files to localhost:9001
+* Serves your static files to localhost:9002
 * Reloads your browser with LiveReload when files change
 
 ## Getting things up and running
@@ -17,13 +17,13 @@
  cd <your project name>
  npm install
  npm start
- open http://localhost:9001 in your browser
+ open http://localhost:9002 in your browser
 ````
 ## CLI Commands
 * npm install
     * Installs server-side dependencies from NPM and client-side dependencies from Bower
 * npm start
-    * Compiles your files, starts watching files for changes, serves static files to port 9001
+    * Compiles your files, starts watching files for changes, serves static files to port 9002
 * npm run build
     * Builds everything
 
@@ -61,14 +61,14 @@ Now your should be able to require jQuery in your coffee files
 For non-CommonJS compatible modules you have to use browserify-shim. Read more about it [here](https://github.com/thlorenz/browserify-shim).
 
 ### Using JavaScript instead of CoffeeScript
-Remove coffeeify transform from package.json file (browserify.transform field) 
+Remove coffeeify transform from package.json file (browserify.transform field)
 ``````
 "browserify": {
   "transform": ["browserify-shim"]
 }
 ``````
 
-and change the ".coffee" extension to ".js" from gulpfile.coffee 
+and change the ".coffee" extension to ".js" from gulpfile.coffee
 ``````
 paths =
   scripts:
