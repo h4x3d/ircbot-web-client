@@ -1,10 +1,10 @@
 .chat
   .chat-channels
 
-    .channel(ng-click='filterMessagesBy()').
+    .channel(ng-click='filterMessagesBy()', ng-class='{ selected: !filter }').
       All messages
 
-    .channel(ng-click='filterMessagesBy(channel)', ng-repeat='channel in channels')
+    .channel(ng-click='filterMessagesBy(channel)', ng-repeat='channel in channels', ng-class='{ selected: filter === channel }')
       {{ channel.name }}
 
   .chat-window

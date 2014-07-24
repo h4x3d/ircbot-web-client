@@ -48,6 +48,7 @@ angular
 
   $scope.filterMessagesBy = function(channel) {
     $scope.filter = channel;
+    updateVisibleMessages();
   };
 
   updateVisibleMessages();
