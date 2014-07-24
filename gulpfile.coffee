@@ -21,18 +21,21 @@ production = process.env.NODE_ENV is 'production'
 
 paths =
   scripts:
-    source: './src/js/app.js'
+    source: './src/app.js'
     destination: './public/js/'
     filename: 'bundle.js'
+
   templates:
-    main: './src/jade/index.jade'
-    source: './src/jade/**/*.jade'
-    watch: './src/jade/**/*.jade'
+    main: './src/index.jade'
+    source: './src/**/*.jade'
+    watch: './src/**/*.jade'
     destination: './public/'
+
   styles:
-    source: './src/stylus/style.styl'
-    watch: './src/stylus/*.styl'
+    source: './src/style.styl'
+    watch: './src/**/*.styl'
     destination: './public/css/'
+
   assets:
     source: './src/assets/**/*.*'
     watch: './src/assets/**/*.*'
@@ -65,7 +68,7 @@ compileTemplates = ->
     .pipe gulp.dest paths.templates.destination
 
   tpls = gulp
-    .src [paths.templates.source, '!#{paths.templates.main}']
+    .src [paths.templates.source, "!#{paths.templates.main}"]
     .pipe jade pretty: not production
     .on 'error', handleError
     .pipe templates 'templates.js'
@@ -119,9 +122,7 @@ gulp.task "watch", ->
 
   .emit 'update'
 
-  gulp.watch paths.templates.watch, ->
-    compileTemplates().on 'end', ->
-      bundle.emit 'update'
+  gulp.watch paths.templates.watch, compileTemplates
 
 gulp.task "build", ['scripts', 'templates', 'styles', 'assets']
 gulp.task "default", ["build", "watch", "server"]

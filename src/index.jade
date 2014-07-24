@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title ircbot web-ui
+    link(rel='stylesheet', href='css/style.css')
+  body(ng-app='app')
+    .view(ng-view)
+
+    #login.modal(ng-controller='MainController', ng-class='{ visible: visible }')
+
+      .modal-dialog
+        h1.modal-title Login
+        .modal-dialog-content
+          .modal-content
+            form(ng-submit='submit()')
+              .input-group
+                label Username:
+                input(type='text', ng-model='username')
+
+              .input-group
+                label Password:
+                input(type='password', ng-model='password')
+
+              button.btn(type='submit') Submit
+
+    script(src='js/bundle.js')

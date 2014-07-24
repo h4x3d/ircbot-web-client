@@ -1,0 +1,91 @@
+body, html
+  margin 0
+  width 100%
+  height 100%
+  font 13px 'Helvetica Neue', Helvetica, arial, sans-serif
+
+@import './chat'
+
+.view
+  width 100%
+  height 100%
+
+.modal
+  display none
+  position fixed
+  width 100%
+  height 100%
+  top 0
+  left 0
+  &:before
+    width 100%
+    height 100%
+    content ''
+    position absolute
+    top 0
+    left 0
+    background rgba(0, 0, 0, 0.4)
+  &.visible
+    display block
+h1, h2, h3
+  margin 0
+
+.modal-dialog
+  position absolute
+  width 50%
+  height 50%
+  background #fff
+  left 25%
+  top 25%
+  padding 2em
+  box-sizing border-box
+
+.modal-dialog-content
+  width 100%
+  height 100%
+  display table
+
+.modal-content
+  display inline-block
+  margin auto
+  display table-cell
+  vertical-align middle
+
+  form
+    width 60%
+    margin auto
+
+    .btn
+      width 100%
+      padding 1em
+      margin-top 1em
+
+    label
+      display block
+      margin-bottom 0.5em
+      font-size 1.2em
+      font-weight 200
+    input
+      width 100%
+
+.modal-title
+  position absolute
+  top 1em
+  left 1em
+  font-weight 100
+  font-size 3em
+  letter-spacing 3px
+.input-group
+  padding 0.5em 0
+  input
+    border 1px solid #E5E5E5
+    height 35px
+
+.btn
+  border 0
+  padding 1em 2em
+  background #478BEF
+  color #fff
+  font inherit
+  font-size 1.3em
+  font-weight 100

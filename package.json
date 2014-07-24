@@ -14,7 +14,9 @@
   ],
   "author": "",
   "dependencies": {
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "lodash": "~2.4.1",
+    "socket.io-client": "~1.0.6"
   },
   "devDependencies": {
     "gulp-rename": "~1.2.0",
@@ -35,15 +37,23 @@
     "watchify": "~0.10.2",
     "ecstatic": "~0.5.3",
     "gulp-minify-css": "~0.3.5",
-    "debowerify": "~0.8.1"
+    "browserify-shim": "~3.6.0"
+  },
+  "browserify-shim": {
+    "restangular": {
+      "depends": [
+        "lodash:_"
+      ]
+    }
   },
   "browser": {
+    "restangular": "./bower_components/restangular/dist/restangular.js",
     "angular": "./bower_components/angular/angular.js",
-    "angular-route": "./bower_components/angular-route/angular-route.js"
+    "angular-route": "./bower_components/angular-route/angular-route.js",
+    "angular-socket-io": "./bower_components/angular-socket-io/socket.js",
+    "angular-http-auth": "./bower_components/angular-http-auth/src/http-auth-interceptor.js"
   },
   "browserify": {
-    "transform": [
-      "debowerify"
-    ]
+    "transform": ["browserify-shim"]
   }
 }
