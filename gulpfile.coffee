@@ -55,7 +55,8 @@ gulp.task 'scripts', ['templates'], ->
     .on 'error', handleError
     .pipe source paths.scripts.filename
 
-  build.pipe(streamify(uglify())) if production
+  # TODO
+  # build.pipe(streamify(uglify())) if production
 
   build
     .pipe gulp.dest paths.scripts.destination
