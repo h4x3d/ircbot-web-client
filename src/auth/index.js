@@ -18,6 +18,10 @@ angular.module('auth', ['user', 'store'])
     return token;
   }
 
+  if(token) {
+    $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+  }
+
   function authenticate(username, password) {
     return Restangular.all('login').post({
       username: username,

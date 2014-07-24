@@ -1,7 +1,17 @@
 .chat
   .chat-channels
+
+    .channel(ng-click='filterMessagesBy()').
+      All messages
+
+    .channel(ng-click='filterMessagesBy(channel)', ng-repeat='channel in channels')
+      {{ channel.name }}
+
   .chat-window
-    .chat-messages
-      .chat-message(ng-repeat='message in messages').
-        {{ message.string }}
+    .chat-messages(chat-window, chat-window-messages='visibleMessages')
+      .chat-message(ng-repeat='message in visibleMessages')
+        strong.chat-message-from {{ message.from }}
+        span.chat-message-body {{ message.message }}
+        .chat-message-timestamp(am-time-ago='message.timestamp')
+
     .chat-input

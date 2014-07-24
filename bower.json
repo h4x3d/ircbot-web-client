@@ -17,6 +17,7 @@
     "angular-route": "~1.2.9",
     "angular-socket-io": "~0.6.0",
     "restangular": "~1.4.0",
-    "angular-http-auth": "~1.2.1"
+    "angular-http-auth": "~1.2.1",
+    "angular-moment": "~0.7.1"
   }
 }
