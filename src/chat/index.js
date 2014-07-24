@@ -51,6 +51,30 @@ angular
     updateVisibleMessages();
   };
 
+  function addMessage(message) {
+    messages.push(new Message(message));
+    updateVisibleMessages();
+  }
+
+  function sendMessage() {
+    if(!$scope.filter) return;
+
+    irc.send($scope.filter.name, $scope.message);
+
+    addMessage({
+      from: config.nickname,
+      to: $scope.filter.name,
+      message: $scope.message
+    });
+
+    $scope.message = null;
+  }
+
+  $scope.keypressed = function(event) {
+    if(event.keyCode !== 13) return;
+    sendMessage();
+  };
+
   updateVisibleMessages();
   function updateVisibleMessages() {
     if(!$scope.filter) {
@@ -62,7 +86,6 @@ angular
     });
   }
 
-
   // irc.on('authenticated', function() {});
   // irc.on('data', function() {});
 
@@ -70,34 +93,6 @@ angular
     $scope.channels.push(new Channel(message.channel));
   });
 
-  irc.on('message', function(message) {
-    messages.push(new Message(message));
-    updateVisibleMessages();
-  });
+  irc.on('message', addMessage);
 
-}]).directive('chatWindow', function() {
-  return {
-    restrict: 'A',
-    link: function($scope, element, attrs) {
-
-      var scrollLocked = false;
-
-      function scrollToBottom() {
-        if(scrollLocked) return;
-        var scrollHeight = element.prop('scrollHeight');
-        element[0].scrollTop = scrollHeight;
-      }
-
-      $scope.$watch(attrs.chatWindowMessages, function() {
-        scrollToBottom();
-      }, true);
-
-      element.on('scroll', function() {
-        var style = window.getComputedStyle(element[0]);
-        var innerHeight = parseInt(style.getPropertyValue('height'));
-        var scrollPosition = element.prop('scrollHeight') - element[0].scrollTop;
-        scrollLocked = scrollPosition - innerHeight > 50;
-      });
-    }
-  };
-});
+}]).directive('chatWindow', require('./directives/chat-window'));

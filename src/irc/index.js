@@ -40,6 +40,13 @@ angular
     }
   });
 
+  socket.send = function(target, message) {
+    socket.emit('send', {
+      target: target,
+      message: message
+    });
+  };
+
   return socket;
 
 }]);

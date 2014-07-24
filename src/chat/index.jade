@@ -7,7 +7,7 @@
     .channel(ng-click='filterMessagesBy(channel)', ng-repeat='channel in channels', ng-class='{ selected: filter === channel }')
       {{ channel.name }}
 
-  .chat-window
+  .chat-window(ng-class='{ "input-visible": filter }')
     .chat-messages(chat-window, chat-window-messages='visibleMessages')
       .chat-message(ng-repeat='message in visibleMessages')
         strong.chat-message-from {{ message.from }}
@@ -15,3 +15,4 @@
         .chat-message-timestamp(am-time-ago='message.timestamp')
 
     .chat-input
+      input.input(type='text', ng-model='message', ng-keypress='keypressed($event)')
