@@ -18,8 +18,11 @@ angular
 
   $httpProvider.defaults.useXDomain = true;
 
+  var production = process.env.NODE_ENV === 'production';
+  var address = production ? '/api' : 'http://localhost:9001/api';
+
   RestangularProvider.setRestangularFields({id: '_id'});
-  RestangularProvider.setBaseUrl('http://localhost:9001/api');
+  RestangularProvider.setBaseUrl(address);
 
 }]).controller('MainController', ['$rootScope', '$scope', 'authService', 'Auth', function($rootScope, $scope, authService, Auth) {
 

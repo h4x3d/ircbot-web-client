@@ -60,6 +60,7 @@ gulp.task 'scripts', ['templates'], ->
   build
     .pipe gulp.dest paths.scripts.destination
 
+
 compileTemplates = ->
   main = gulp
     .src paths.templates.main
@@ -74,8 +75,9 @@ compileTemplates = ->
     .pipe templates 'templates.js'
     .pipe gulp.dest 'tmp'
 
-  es.merge main, tpls
-    .pipe livereload()
+  pipeline = es.merge main, tpls
+  pipeline = pipeline.pipe livereload() unless production
+  pipeline
 
 gulp.task 'templates', compileTemplates
 
@@ -88,8 +90,9 @@ gulp.task 'styles', ->
 
   styles = styles.pipe(CSSmin()) if production
 
-  styles.pipe gulp.dest paths.styles.destination
-    .pipe livereload()
+  pipeline = styles.pipe gulp.dest paths.styles.destination
+  pipeline = pipeline.pipe livereload() unless production
+  pipeline
 
 gulp.task 'assets', ->
   gulp

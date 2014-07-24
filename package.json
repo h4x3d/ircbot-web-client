@@ -38,7 +38,8 @@
     "watchify": "~0.10.2",
     "ecstatic": "~0.5.3",
     "gulp-minify-css": "~0.3.5",
-    "browserify-shim": "~3.6.0"
+    "browserify-shim": "~3.6.0",
+    "envify": "~2.0.1"
   },
   "browserify-shim": {
     "restangular": {
@@ -62,7 +63,8 @@
   },
   "browserify": {
     "transform": [
-      "browserify-shim"
+      "browserify-shim",
+      "envify"
     ]
   }
 }

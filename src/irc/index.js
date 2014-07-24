@@ -4,11 +4,15 @@ require('angular-socket-io');
 
 var io = require('socket.io-client');
 
+var production = process.env.NODE_ENV === 'production';
+var address = production ? '/' : 'ws://localhost:9001';
+
 angular
 .module('irc', ['btford.socket-io', 'restangular', 'auth'])
 .factory('irc', ['socketFactory', 'Auth', '$rootScope', function(socketFactory, Auth, $rootScope) {
 
-  var connection = io.connect('ws://localhost:9001');
+
+  var connection = io.connect(address);
   var socket = socketFactory({ioSocket: connection });
 
   function requireAuthentication() {
