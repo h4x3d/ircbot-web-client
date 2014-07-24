@@ -1,0 +1,10 @@
+---
+project_name: ircbot-client
+projects_path: /home/ircbot/ircbot-web-client
+repository_url: git@github.com:h4x3d/ircbot-web-client.git
+service_user: ircbot
+nvm_path: /home/ircbot/nvm
+nvm_script: /home/ircbot/nvm/nvm.sh
+nodejs_version: v0.10.25
+api_port: 9001
+public_hostname: localhost
