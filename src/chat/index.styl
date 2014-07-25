@@ -65,7 +65,7 @@ chatInputHeight = 50px
   form
     display flex
 
-  label
+  .input-label
     white-space nowrap
     line-height chatInputHeight - 12px
     height chatInputHeight - 12px
@@ -74,12 +74,16 @@ chatInputHeight = 50px
     background #ccc
     border 1px solid rgba(0, 0, 0, 0.1)
     color rgba(0, 0, 0, 0.5)
+
   .input
     border 0
     height chatInputHeight - 10px
     display inline-block
     flex 1
 
+.input-label-nickname
+  cursor pointer
+  box-shadow inset 1px 1px 0px rgba(255, 255, 255, 0.2)
 .chat-messages
   width 100%
   height 100%
