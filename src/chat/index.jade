@@ -20,9 +20,12 @@
 
     .chat-input
       form(ng-show='inputMode === "chat"', ng-submit='send()')
-        label.input-label {{ me }}
-        input.input(type='text', ng-model='message', focus-when='inputMode === "chat"', focus-watch='currentChannel.name')
+        label.input-label(ng-click='setInputMode("nick")') {{ me }}
+        input.input(type='text', ng-model='message', placeholder='Enter message...', focus-when='inputMode === "chat"', focus-watch='currentChannel.name')
 
       form(ng-show='inputMode === "channel"', ng-submit='join()')
         label.input-label #
-        input.input(type='text', ng-model='channel', placeholder='Enter channel name', focus-when='inputMode === "channel"', ng-blur='setInputMode("chat")')
+        input.input(type='text', ng-model='channel', placeholder='Enter channel name...', focus-when='inputMode === "channel"', ng-blur='setInputMode("chat")')
+
+      form(ng-show='inputMode === "nick"', ng-submit='setNick()')
+        input.input(type='text', ng-model='nick', placeholder='Enter a new nickname...', focus-when='inputMode === "nick"', ng-blur='setInputMode("chat")')

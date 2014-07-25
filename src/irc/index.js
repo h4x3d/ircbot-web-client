@@ -55,6 +55,12 @@ angular
     });
   }
 
+  function nick(nickname) {
+    socket.emit('nick', {
+      nick: nickname
+    });
+  }
+
   function me() {
     // jshint unused:false
 
@@ -78,7 +84,8 @@ angular
     on: socket.on,
     channels: Channels,
     send: send,
-    me: me
+    me: me,
+    nick: nick
   };
 
 }]);

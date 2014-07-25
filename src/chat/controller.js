@@ -90,6 +90,13 @@ module.exports = ['$scope', 'irc', 'Store', function($scope, irc, Store) {
     });
   };
 
+  $scope.setNick = function() {
+    if(!$scope.nick) return;
+    irc.nick($scope.nick);
+    $scope.nick = null;
+    $scope.inputMode = 'chat';
+  };
+
   $scope.join = function() {
     if(!$scope.channel) return;
 
