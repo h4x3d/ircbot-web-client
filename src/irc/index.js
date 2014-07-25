@@ -1,9 +1,7 @@
 'use strict';
-/* jshint -W079 */
 
 require('angular-socket-io');
 
-var Promise = require('bluebird');
 var io = require('socket.io-client');
 
 require('../channels');
@@ -13,7 +11,7 @@ var address = production ? '/' : 'ws://localhost:9001';
 
 angular
 .module('irc', ['btford.socket-io', 'restangular', 'auth', 'channels'])
-.service('irc', ['socketFactory', 'Auth', '$rootScope', 'Channels', function(socketFactory, Auth, $rootScope, Channels) {
+.service('irc', ['$rootScope', '$q', 'socketFactory', 'Auth', 'Channels', function($rootScope, $q, socketFactory, Auth, Channels) {
 
   var authenticated = false;
   var connection = io.connect(address);
@@ -59,15 +57,21 @@ angular
 
   function me() {
     // jshint unused:false
-    return new Promise(function(resolve, reject) {
-      function emit() {
-        return socket.emit('me', resolve);
-      }
-      if(authenticated) {
-        return emit();
-      }
-      return socket.on('authenticated', emit);
-    });
+
+    var deferred = $q.defer();
+
+    function emit() {
+      socket.emit('me', deferred.resolve);
+    }
+
+    if(authenticated) {
+      emit();
+      return deferred.promise;
+    }
+
+    socket.on('authenticated', emit);
+
+    return deferred.promise;
   }
 
   return {
