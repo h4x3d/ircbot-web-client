@@ -1,17 +1,17 @@
 .chat
   .chat-channels
     .channel-list
-      .channel(ng-click='showChannel()', ng-class='{ selected: !filter }').
+      .channel(ng-click='showChannel()', ng-class='{ selected: !currentChannel }').
         All messages
 
-      .channel(ng-click='showChannel(channel)', ng-repeat='channel in channels', ng-class='{ selected: filter.name === channel.name }')
+      .channel(ng-click='showChannel(channel)', ng-repeat='channel in channels', ng-class='{ selected: currentChannel.name === channel.name }')
         span {{ channel.name }}
         .channel-close(ng-click='part(channel)') ×
 
     .channel-controls
       button.btn.btn-add-channel(ng-click='setInputMode("channel")') +
 
-  .chat-window(ng-class='{ "input-visible": filter || inputMode !== "chat" }')
+  .chat-window(ng-class='{ "input-visible": inputVisible() }')
     .chat-messages(chat-window, chat-window-messages='visibleMessages')
       .chat-message(ng-repeat='message in visibleMessages')
         strong.chat-message-from {{ message.from }}
@@ -21,7 +21,7 @@
     .chat-input
       form(ng-show='inputMode === "chat"', ng-submit='send()')
         label.input-label Message
-        input.input(type='text', ng-model='message', focus-when='inputMode === "chat"', focus-watch='filter.name')
+        input.input(type='text', ng-model='message', focus-when='inputMode === "chat"', focus-watch='currentChannel.name')
 
       form(ng-show='inputMode === "channel"', ng-submit='join()')
         label.input-label #

@@ -16,7 +16,6 @@ module.exports = ['$parse', '$timeout', function($parse, $timeout) {
       if(attrs.focusWatch) {
         var watch = $parse(attrs.focusWatch);
         $scope.$watch(watch, function(value) {
-          console.log('watcg');
           if(!value) return;
           $timeout(function() {
             element[0].focus();

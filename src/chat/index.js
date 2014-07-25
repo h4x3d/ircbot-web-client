@@ -47,10 +47,10 @@ angular
 
   $scope.visibleMessages = [];
   $scope.inputMode = null;
-  $scope.filter = null;
+  $scope.currentChannel = null;
 
   $scope.showChannel = function(channel) {
-    $scope.filter = channel;
+    $scope.currentChannel = channel;
     updateVisibleMessages();
     $scope.inputMode = 'chat';
   };
@@ -82,6 +82,10 @@ angular
     $scope.inputMode = mode;
   };
 
+  $scope.inputVisible = function() {
+    return $scope.currentChannel || ($scope.inputMode && $scope.inputMode !== 'chat');
+  };
+
   function addMessage(message) {
     messages.push(new Message(message));
     updateVisibleMessages();
@@ -98,13 +102,13 @@ angular
   }
 
   function send() {
-    if(!$scope.filter) return;
+    if(!$scope.currentChannel) return;
 
-    irc.send($scope.filter.name, $scope.message);
+    irc.send($scope.currentChannel.name, $scope.message);
 
     addMessage({
       from: 'TODO',
-      to: $scope.filter.name,
+      to: $scope.currentChannel.name,
       message: $scope.message
     });
 
@@ -114,12 +118,12 @@ angular
 
   updateVisibleMessages();
   function updateVisibleMessages() {
-    if(!$scope.filter) {
+    if(!$scope.currentChannel) {
       $scope.visibleMessages = messages;
       return;
     }
     $scope.visibleMessages = messages.filter(function(message) {
-      return message.to === $scope.filter.name;
+      return message.to === $scope.currentChannel.name;
     });
   }
 
