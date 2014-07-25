@@ -17,5 +17,4 @@ angular
    });
 }])
 .directive('chatWindow', require('./directives/chat-window'))
-.directive('focusWhen', require('./directives/focus-when'))
 .controller('ChatController', require('./controller'));

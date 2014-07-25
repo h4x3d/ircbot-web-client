@@ -14,6 +14,7 @@ require('./chat');
 
 angular
 .module('app', ['templates', 'ngRoute', 'restangular', 'http-auth-interceptor', 'auth', 'user', 'irc', 'chat'])
+.directive('focusWhen', require('./directives/focus-when'))
 .config(['$routeProvider', '$locationProvider', 'RestangularProvider', '$httpProvider', function($routeProvider, $locationProvider, RestangularProvider, $httpProvider) {
 
   $httpProvider.defaults.useXDomain = true;
@@ -27,6 +28,8 @@ angular
 }]).controller('MainController', ['$rootScope', '$scope', 'authService', 'Auth', function($rootScope, $scope, authService, Auth) {
 
   $scope.visible = false;
+  $scope.focusTo = null;
+  $scope.errorMessage = null;
 
   $rootScope.$on('event:auth-loginRequired', function() {
     $scope.visible = true;
@@ -37,9 +40,30 @@ angular
   });
 
   $scope.submit = function() {
+    if(!($scope.username && $scope.password)) {
+      return;
+    }
+
+    $scope.errorMessage = null;
+    $scope.focusTo = null;
+
     Auth.authenticate($scope.username, $scope.password)
     .then(authService.loginConfirmed, function(err) {
-      console.log(err); // TODO
+
+      $scope.errorMessage = err.data;
+
+      var message = err.data.toLowerCase();
+
+      if(message.indexOf('username') > -1) {
+        $scope.username = null;
+        $scope.focusTo = 'username';
+      }
+
+      if(message.indexOf('password') > -1) {
+        $scope.password = null;
+        $scope.focusTo = 'password';
+      }
+
     });
   };
 

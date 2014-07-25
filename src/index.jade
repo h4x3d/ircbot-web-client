@@ -16,13 +16,17 @@ html
             .dialog-content-wrapper
               .dialog-content-container
                 form(ng-submit='submit()')
+                  .input-group(ng-show='errorMessage')
+                    .box.box-error.
+                      {{ errorMessage }}
+
                   .input-group
                     label Username:
-                    input.input(type='text', ng-model='username')
+                    input.input(type='text', ng-model='username', focus-when='focusTo === "username"')
 
                   .input-group
                     label Password:
-                    input.input(type='password', ng-model='password')
+                    input.input(type='password', ng-model='password', focus-when='focusTo === "password"')
 
                   button.btn(type='submit') Submit
 
