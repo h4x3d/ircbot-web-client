@@ -81,6 +81,8 @@ module.exports = ['$scope', 'irc', 'Store', function($scope, irc, Store) {
     updateVisibleMessages();
     $scope.inputMode = 'chat';
 
+    if(!channel) return;
+
     Store.set('currentChannel', channel.name);
   };
 
