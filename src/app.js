@@ -48,7 +48,10 @@ angular
     $scope.focusTo = null;
 
     Auth.authenticate($scope.username, $scope.password)
-    .then(authService.loginConfirmed, function(err) {
+    .then(function() {
+      authService.loginConfirmed();
+      $scope.username = $scope.password = null;
+    }, function(err) {
 
       $scope.errorMessage = err.data;
 
