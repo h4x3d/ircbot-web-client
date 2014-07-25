@@ -16,32 +16,72 @@ function Message(opts) {
   this.timestamp = Date.now();
 }
 
-module.exports = ['$scope', 'irc', function($scope, irc) {
+module.exports = ['$scope', 'irc', 'Store', function($scope, irc, Store) {
 
-  $scope.channels = [];
-  $scope.me = null;
-
-  irc.channels.getList().then(function(channels) {
-    $scope.channels = channels.map(function(channel) {
-      return new Channel(channel);
-    });
-  });
-
-  irc.me().then(function(nickname) {
-    $scope.me = nickname;
-  });
-
-
-  var messages = [];
+  /**
+   * Scope variables
+   */
 
   $scope.visibleMessages = [];
   $scope.inputMode = null;
   $scope.currentChannel = null;
 
+  $scope.channels = [];
+  $scope.me = null;
+
+  /**
+   * Array where all received messages are stored
+   */
+
+  var messages = [];
+
+  /**
+   * Get all channels, add new Channel instances to scope
+   * show previously selected channel
+   */
+
+  irc.channels.getList().then(function(channels) {
+
+    $scope.channels = channels.map(function(channel) {
+      return new Channel(channel);
+    });
+
+    var storedCurrentChannel = Store.get('currentChannel');
+
+    if(!storedCurrentChannel) return;
+
+    var channel = _.findWhere($scope.channels, {name: storedCurrentChannel});
+
+    if(!channel) {
+      Store.remove('currentChannel');
+      return;
+    }
+
+    $scope.showChannel(channel);
+
+  });
+
+  /**
+   * Fetch current nickname and start listening for changes
+   */
+
+  irc.me().then(function(nickname) {
+    $scope.me = nickname;
+  });
+
+  irc.on('nick', function(event) {
+    if(event.nick === $scope.me) {
+      $scope.me = event.new;
+    }
+  });
+
+
   $scope.showChannel = function(channel) {
     $scope.currentChannel = channel;
     updateVisibleMessages();
     $scope.inputMode = 'chat';
+
+    Store.set('currentChannel', channel.name);
   };
 
   $scope.part = function(channel) {

@@ -8,6 +8,9 @@ angular.module('store', [])
     },
     set: function(key, value) {
       return window.localStorage.setItem(key, value);
+    },
+    remove: function(key) {
+      return window.localStorage.removeItem(key);
     }
   };
 }]);

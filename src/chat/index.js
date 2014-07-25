@@ -6,9 +6,10 @@ require('angular-moment');
 
 require('../auth');
 require('../irc');
+require('../store');
 
 angular
-.module('chat', ['ngRoute', 'http-auth-interceptor', 'auth', 'irc', 'angularMoment'])
+.module('chat', ['ngRoute', 'http-auth-interceptor', 'auth', 'irc', 'store', 'angularMoment'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
    .when('/', {
