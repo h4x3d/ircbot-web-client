@@ -25,32 +25,51 @@ body, html
     position absolute
     top 0
     left 0
+    z-index 1
     background rgba(0, 0, 0, 0.4)
   &.visible
-    display block
+    display table
+
 h1, h2, h3
   margin 0
 
-.modal-dialog
-  position absolute
-  width 50%
-  height 50%
-  background #fff
-  left 25%
-  top 25%
+.dialog-wrapper
+  z-index 2
+  position relative
+  display table-cell
   padding 2em
   box-sizing border-box
+  vertical-align middle
 
-.modal-dialog-content
+.dialog
+  background #fff
+  width 500px
+  height 450px
+  margin auto
+  position relative
+  box-sizing border-box
+  padding-top 4.3em
+  &.dialog-login
+    width 75%
+    height 75%
+    max-width 500px
+    max-height 360px
+
+.dialog-content
+  width 100%
+  height 100%
+  overflow auto
+
+.dialog-content-wrapper
   width 100%
   height 100%
   display table
 
-.modal-content
-  display inline-block
+.dialog-content-container
   margin auto
   display table-cell
   vertical-align middle
+  padding 1em 0
 
   form
     width 60%
@@ -69,13 +88,19 @@ h1, h2, h3
     input
       width 100%
 
-.modal-title
+.dialog-header
+  width 100%
+  box-sizing border-box
+  padding 1em
+  border-bottom 1px solid #E4E4E4
   position absolute
-  top 1em
-  left 1em
-  font-weight 100
-  font-size 3em
-  letter-spacing 3px
+  top 0
+  left 0
+  h1
+    font-weight 100
+    font-size 2em
+    letter-spacing 3px
+
 .input-group
   padding 0.5em 0
 

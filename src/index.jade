@@ -7,20 +7,23 @@ html
     .view(ng-view)
 
     #login.modal(ng-controller='MainController', ng-class='{ visible: visible }')
+      .dialog-wrapper
+        .dialog.dialog-login
+          .dialog-header
+            h1 Login
 
-      .modal-dialog
-        h1.modal-title Login
-        .modal-dialog-content
-          .modal-content
-            form(ng-submit='submit()')
-              .input-group
-                label Username:
-                input.input(type='text', ng-model='username')
+          .dialog-content
+            .dialog-content-wrapper
+              .dialog-content-container
+                form(ng-submit='submit()')
+                  .input-group
+                    label Username:
+                    input.input(type='text', ng-model='username')
 
-              .input-group
-                label Password:
-                input.input(type='password', ng-model='password')
+                  .input-group
+                    label Password:
+                    input.input(type='password', ng-model='password')
 
-              button.btn(type='submit') Submit
+                  button.btn(type='submit') Submit
 
     script(src='js/bundle.js')
