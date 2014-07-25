@@ -1,18 +1,22 @@
 'use strict';
 
+var _ = require('lodash');
+
 require('angular');
 require('angular-route');
 require('angular-moment');
 
 require('../auth');
 require('../irc');
-require('../config');
+require('../channels');
 
-function Channel(identifier) {
-  this.identifier = identifier;
-  this.name = identifier.split(' ')[0];
+function Channel(channel) {
+  for(var key in channel) {
+    this[key] = channel[key];
+  }
   this.messages = [];
 }
+
 function Message(opts) {
   for(var key in opts) {
     this[key] = opts[key];
@@ -21,34 +25,61 @@ function Message(opts) {
 }
 
 angular
-.module('chat', ['ngRoute', 'http-auth-interceptor', 'auth', 'irc', 'config', 'angularMoment'])
+.module('chat', ['ngRoute', 'http-auth-interceptor', 'auth', 'irc', 'channels', 'angularMoment'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
    .when('/', {
     templateUrl: 'chat/index.html',
-    controller: 'ChatController',
-    resolve: {
-      config: ['Config', function(Config) {
-        return Config.get();
-      }]
-    }
+    controller: 'ChatController'
    });
 }])
-.controller('ChatController', ['$scope', 'irc', 'config', function($scope, irc, config) {
+.controller('ChatController', ['$scope', 'irc', 'Channels', function($scope, irc, Channels) {
 
-  $scope.channels = config.channels.map(function(channel) {
-    return new Channel(channel);
+  $scope.channels = [];
+
+  Channels.getList().then(function(channels) {
+    $scope.channels = channels.map(function(channel) {
+      return new Channel(channel);
+    });
   });
 
   var messages = [];
 
   $scope.visibleMessages = [];
-
+  $scope.inputMode = null;
   $scope.filter = null;
 
-  $scope.filterMessagesBy = function(channel) {
+  $scope.showChannel = function(channel) {
     $scope.filter = channel;
     updateVisibleMessages();
+    $scope.inputMode = 'chat';
+  };
+
+  $scope.part = function(channel) {
+    Channels.part(channel.name).then(function() {
+      removeChannel(channel.name);
+    });
+  };
+
+  $scope.join = function() {
+    if(!$scope.channel) return;
+
+    if($scope.channel[0] !== '#') {
+      $scope.channel = '#' + $scope.channel;
+    }
+
+    Channels.join($scope.channel).then(function(channel) {
+      addChannel(channel);
+      $scope.showChannel(channel);
+    });
+
+    $scope.channel = null;
+  };
+
+  $scope.send = send;
+
+  $scope.setInputMode = function(mode) {
+    $scope.inputMode = mode;
   };
 
   function addMessage(message) {
@@ -56,13 +87,23 @@ angular
     updateVisibleMessages();
   }
 
-  function sendMessage() {
+  function addChannel(channel) {
+    $scope.channels.push(new Channel(channel));
+  }
+
+  function removeChannel(name) {
+    $scope.channels = $scope.channels.filter(function(channel) {
+      return channel.name !== name;
+    });
+  }
+
+  function send() {
     if(!$scope.filter) return;
 
     irc.send($scope.filter.name, $scope.message);
 
     addMessage({
-      from: config.nickname,
+      from: 'TODO',
       to: $scope.filter.name,
       message: $scope.message
     });
@@ -70,10 +111,6 @@ angular
     $scope.message = null;
   }
 
-  $scope.keypressed = function(event) {
-    if(event.keyCode !== 13) return;
-    sendMessage();
-  };
 
   updateVisibleMessages();
   function updateVisibleMessages() {
@@ -90,9 +127,21 @@ angular
   // irc.on('data', function() {});
 
   irc.on('join', function(message) {
-    $scope.channels.push(new Channel(message.channel));
+    if(_.findWhere($scope.channels, {name: message.channel})) {
+      return;
+    }
+
+    $scope.channels.push(new Channel({
+      name: message.channel
+    }));
+  });
+
+  irc.on('part', function(message) {
+    message.channels.forEach(removeChannel);
   });
 
   irc.on('message', addMessage);
 
-}]).directive('chatWindow', require('./directives/chat-window'));
+}])
+.directive('chatWindow', require('./directives/chat-window'))
+.directive('focusWhen', require('./directives/focus-when'));
