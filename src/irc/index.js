@@ -4,13 +4,14 @@ require('angular-socket-io');
 
 var io = require('socket.io-client');
 
+require('../channels');
+
 var production = process.env.NODE_ENV === 'production';
 var address = production ? '/' : 'ws://localhost:9001';
 
 angular
-.module('irc', ['btford.socket-io', 'restangular', 'auth'])
-.factory('irc', ['socketFactory', 'Auth', '$rootScope', function(socketFactory, Auth, $rootScope) {
-
+.module('irc', ['btford.socket-io', 'restangular', 'auth', 'channels'])
+.service('irc', ['socketFactory', 'Auth', '$rootScope', 'Channels', function(socketFactory, Auth, $rootScope, Channels) {
 
   var connection = io.connect(address);
   var socket = socketFactory({ioSocket: connection });
@@ -51,6 +52,9 @@ angular
     });
   };
 
-  return socket;
+  return {
+    on: socket.on,
+    channels: Channels
+  };
 
 }]);
