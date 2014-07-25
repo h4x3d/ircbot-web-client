@@ -181,6 +181,12 @@ module.exports = ['$scope', 'irc', 'Store', function($scope, irc, Store) {
     if(event.nick === $scope.me) {
       $scope.me = event.new;
     }
+    messages = _.map(messages, function(message) {
+      if(message.from === event.nick) {
+        message.from = event.new;
+      }
+      return message;
+    });
   });
 
   irc.on('message', addMessage);
