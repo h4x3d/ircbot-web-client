@@ -19,12 +19,18 @@ function Message(opts) {
 module.exports = ['$scope', 'irc', function($scope, irc) {
 
   $scope.channels = [];
+  $scope.me = null;
 
   irc.channels.getList().then(function(channels) {
     $scope.channels = channels.map(function(channel) {
       return new Channel(channel);
     });
   });
+
+  irc.me().then(function(nickname) {
+    $scope.me = nickname;
+  });
+
 
   var messages = [];
 
@@ -90,7 +96,7 @@ module.exports = ['$scope', 'irc', function($scope, irc) {
     irc.send($scope.currentChannel.name, $scope.message);
 
     addMessage({
-      from: 'TODO',
+      from: $scope.me,
       to: $scope.currentChannel.name,
       message: $scope.message
     });
@@ -110,18 +116,24 @@ module.exports = ['$scope', 'irc', function($scope, irc) {
     });
   }
 
-  irc.on('join', function(message) {
-    if(_.findWhere($scope.channels, {name: message.channel})) {
+  irc.on('join', function(event) {
+    if(_.findWhere($scope.channels, {name: event.channel})) {
       return;
     }
 
     $scope.channels.push(new Channel({
-      name: message.channel
+      name: event.channel
     }));
   });
 
-  irc.on('part', function(message) {
-    message.channels.forEach(removeChannel);
+  irc.on('part', function(event) {
+    event.channels.forEach(removeChannel);
+  });
+
+  irc.on('nick', function(event) {
+    if(event.nick === $scope.me) {
+      $scope.me = event.new;
+    }
   });
 
   irc.on('message', addMessage);

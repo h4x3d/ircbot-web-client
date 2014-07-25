@@ -20,7 +20,7 @@
 
     .chat-input
       form(ng-show='inputMode === "chat"', ng-submit='send()')
-        label.input-label Message
+        label.input-label {{ me }}
         input.input(type='text', ng-model='message', focus-when='inputMode === "chat"', focus-watch='currentChannel.name')
 
       form(ng-show='inputMode === "channel"', ng-submit='join()')

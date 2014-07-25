@@ -1,7 +1,9 @@
 'use strict';
+/* jshint -W079 */
 
 require('angular-socket-io');
 
+var Promise = require('bluebird');
 var io = require('socket.io-client');
 
 require('../channels');
@@ -13,6 +15,7 @@ angular
 .module('irc', ['btford.socket-io', 'restangular', 'auth', 'channels'])
 .service('irc', ['socketFactory', 'Auth', '$rootScope', 'Channels', function(socketFactory, Auth, $rootScope, Channels) {
 
+  var authenticated = false;
   var connection = io.connect(address);
   var socket = socketFactory({ioSocket: connection });
 
@@ -28,9 +31,7 @@ angular
   }
 
   socket.on('connect', function() {
-
     var token = Auth.getToken();
-
     if(token) {
       return socket.emit('authenticate', {
         token: token
@@ -39,22 +40,41 @@ angular
     requireAuthentication();
   });
 
+  socket.on('authenticated', function() {
+    authenticated = true;
+  });
+
   socket.on('error', function(err) {
     if(['credentials_required', 'invalid_token'].indexOf(err.code) > -1) {
       requireAuthentication();
     }
   });
 
-  socket.send = function(target, message) {
+  function send(target, message) {
     socket.emit('send', {
       target: target,
       message: message
     });
-  };
+  }
+
+  function me() {
+    // jshint unused:false
+    return new Promise(function(resolve, reject) {
+      function emit() {
+        return socket.emit('me', resolve);
+      }
+      if(authenticated) {
+        return emit();
+      }
+      return socket.on('authenticated', emit);
+    });
+  }
 
   return {
     on: socket.on,
-    channels: Channels
+    channels: Channels,
+    send: send,
+    me: me
   };
 
 }]);
